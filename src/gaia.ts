@@ -30,10 +30,10 @@ function validateEnvironment(): void {
 
   // Check required variables
   const requiredVars = [
-    "OPENAI_API_KEY",
+    "GAIA_API_KEY",
     "CDP_API_KEY_NAME",
     "CDP_API_KEY_PRIVATE_KEY",
-    "OPENAI_API_BASE",
+    "GAIA_BASE_URL",
   ];
   requiredVars.forEach((varName) => {
     if (!process.env[varName]) {
@@ -73,10 +73,12 @@ async function initializeAgent() {
   try {
     // Initialize LLM
     const llm = new ChatOpenAI({
-      model: "llama",
+      model: process.env.GAIA_MODEL_NAME,
+      temperature: 0.7,
+      maxTokens: 500,
       configuration: {
-        baseURL: process.env.OPENAI_API_BASE,
-        apiKey: process.env.OPENAI_API_KEY,
+        baseURL: process.env.GAIA_BASE_URL,
+        apiKey: process.env.GAIA_API_KEY,
       },
     });
 
@@ -228,7 +230,6 @@ async function runChatMode(agent: any, config: any) {
     new Promise((resolve) => rl.question(prompt, resolve));
 
   try {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const userInput = await question("\nPrompt: ");
 
@@ -245,7 +246,20 @@ async function runChatMode(agent: any, config: any) {
         if ("agent" in chunk) {
           console.log(chunk.agent.messages[0].content);
         } else if ("tools" in chunk) {
-          console.log(chunk.tools.messages[0].content);
+          // Parse and display the tool results in a more readable format
+          const toolResult = chunk.tools.messages[0].content;
+          try {
+            if (typeof toolResult === "string") {
+              const parsedResult = JSON.parse(toolResult);
+              console.log("\nFunction Result:");
+              console.log(JSON.stringify(parsedResult, null, 2));
+            } else {
+              console.log("\nFunction Result:");
+              console.log(toolResult);
+            }
+          } catch (e) {
+            console.log("\nFunction Result:", toolResult);
+          }
         }
         console.log("-------------------");
       }

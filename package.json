@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "NODE_OPTIONS='--no-warnings' ts-node ./src/chatbot.ts"
+    "gaia": "NODE_OPTIONS='--no-warnings' ts-node ./src/chatbot.ts",
+    "openai": "NODE_OPTIONS='--no-warnings' ts-node ./src/openai.ts"
   },
   "dependencies": {
     "@coinbase/agentkit": "^0.1.1",
@@ -9,10 +10,12 @@
     "@langchain/langgraph": "^0.2.44",
     "dotenv": "^16.4.7",
     "langchain": "^0.3.15",
-    "ts-node": "^10.9.2",
+    "openai": "^4.83.0",
+    "viem": "^2.22.22",
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
 }
